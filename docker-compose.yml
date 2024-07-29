@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  databse:
+    container_name: teamlogger_database
+    image: mongo:latest
+    volumes:
+      - ./backend/data:/data
+    ports:
+      - "270717:270717"
+  
+  backend:
+    container_name: teamlogger_backend
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    depends_on: teamlogger_database
+  
+  frontend:
+    container_name: teamlogger_forntend
+    build: ./frontend
+    env_file: ./frontend/.env
+    ports:
+      - "3000:3000"
+  
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    image: redis:7.0.5-alpine
+    expose:
+      - 6379
+    depends_on:
+      - teamlogger_database
+      
+volumes: data
